@@ -9,7 +9,7 @@ The design and implementation of the probabilistic model underlying BUNDLE are d
 
 ## Download BUNDLE
 
-The Scala source code for CONTINUUM can be obtained by cloning this repository and running [sbt 0.13.1](http://www.scala-sbt.org/0.13.1/docs/Getting-Started/Setup.html).  However, most people would rather download the [latest build](http://www.github.com).  Unzip the build to find:
+You can work with the Scala source code for BUNDLE by cloning this repository and running [sbt 0.13.1](http://www.scala-sbt.org/0.13.1/docs/Getting-Started/Setup.html).  However, most people would rather download the [latest build](http://www.github.com).  Unzip the build to find:
 
 * `bundle-0.1.0.jar`, a fat jar file with two main classes:
   * `bundle.Bundle` generates posterior distribution trace files.
@@ -30,7 +30,7 @@ infofreq    10                # Report to the terminal every 10 states.
 dumpfreq    100               # Sample every 100 states.
 ```
 
-The data file `pollex06-raw.tsv` codes whether each of 4220 etyma exist in each of 40 Polynesian or Melanesian languages.  Each etymon is thus considered a linguistic feature.  This data was obtained from a 2006 version of [POLLEX](pollex.org.nz), a very larger comparative Polynesian word list.  It takes the form of a 4220×40 binary matrix with tab-separated values.  The first row contains labels for languages; the first column contains labels for features.  The rest of the cells contain either `0` or `1`.
+The data file `pollex06-raw.tsv` codes whether each of 4220 etyma exist in each of 40 Polynesian or Melanesian languages.  Each etymon is thus considered a linguistic feature.  This data was obtained from a 2006 version of [POLLEX](http://pollex.org.nz), a very larger comparative Polynesian word list.  It takes the form of a 4220×40 binary matrix with tab-separated values.  The first row contains labels for languages; the first column contains labels for features.  The rest of the cells contain either `0` or `1`.
 
 Now run:
 
@@ -38,7 +38,7 @@ Now run:
 java -cp bundle-0.1.0.jar bundle.Bundle pollex06/pollex06.conf
 ```
 
-It will take several hours to run to completion.  Every 10 states it will print something like:
+It will take several hours to run to completion.  Every 10 states it will write a short summary of the MCMC state to `pollex06.out` and also to the terminal.  For example, it will write:
 
 ```
 --- 540 ---
@@ -57,7 +57,7 @@ EAS 72 MAO 98 TUA 91 PEN 91 RAR 95 MIA 11 TAH 90 HAW 87 MQA 93 MVA 74
 * Fourth line: `ll` is the log likelihood of the model given . . .
 * Other lines: Inferred lexicographic coverage rate for each language, normalized to 99.For example, the model believes that the XXX etyma attested for Anuta (ANU) comprise just 70% of the actual etyma in Anuta that also occur in the dataset.
 
-BUNDLE also outputs the above into the file `pollex06.out`.  Every 100 states it emits a trace of the entire model state over several files:
+Every 100 states BUNDLE emits a trace of the entire model state over several files:
 
 * `pollex06.log`
 * `pollex06.z.log`
