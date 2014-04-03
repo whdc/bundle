@@ -5,7 +5,7 @@ import scala.math._
 import breeze.numerics.lgamma
 import breeze.stats.distributions.Rand
 
-object Linkage extends App {
+object Continuum extends App {
 
   if( args.length != 1) {
     println( "Required argument: config-file")
