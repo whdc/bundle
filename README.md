@@ -1,11 +1,11 @@
 # BUNDLE
 
-BUNDLE is a model for finding isogloss bundles (typical feature distributions) in a dialect continuum.  Given a binary feature matrix (N features by L languages) it will construct clusters of features that have similar distributions in the L languages.  This is the opposite of many clustering models that cluster objects by their features.  Other notable properties of BUNDLE are:
+BUNDLE is a model for finding isogloss bundles (typical feature distributions) in a dialect continuum.  Given a binary feature matrix (N features by L languages) it will construct clusters of features that have similar distributions over the L languages.  This is the opposite of the typical clustering model which clusters objects by their features.  Other notable properties of BUNDLE are:
 
 * It will automatically infer the number of clusters in the data.
 * It incorporates a simple _attestation model_ that assumes that a given fraction of the features in any language will go unattested.
 
-Generally speaking, BUNDLE is a model whereby the data is generated probabilistically via a set of parameters.  Since many parameterizations generate the data with _some_ probability, BUNDLE infers a probability distribution over parameterizations.  BUNDLE constructs this distribution by sampling from it via a [Monte Carlo Markov chain](http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo) (MCMC).
+Generally speaking, BUNDLE is a model whereby the data is generated probabilistically via a set of parameters.  Since many parameterizations can generate the data with _some_ probability, BUNDLE infers a probability distribution over parameterizations.  BUNDLE samples from this distribution via a [Monte Carlo Markov chain](http://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo) (MCMC).
 
 The design and implementation of the probabilistic model are discussed [here](http://www.github.com) and summarized in the following diagram.
 

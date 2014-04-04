@@ -1,0 +1,56 @@
+\begin{tikzpicture}
+[auto,inner sep=1pt,
+ state/.style={circle, draw, very thick, minimum size=14pt},
+ edge/.style={thick,->,shorten >=1pt, >=stealth, semithick}]
+\node (x) at (0,0) [state, fill=gray, label=right:$x$] {};
+\node (y) at (2,1) [state, label=right:$y$] {};
+\node (w) at (0,2) [state, label=right:$w$] {};
+\node (z) at (-1.7,3) [state, label=right:$z$] {};
+\node (alpha) at (-1.7,4) [state, label=right:$\alpha$] {};
+\node (xi) at (2,5) [state, label=right:$\xi$] {};
+\node (lamxi) at (1.3,6) [state, label=right:$\lambda^{(\xi)}$] {};
+\node (muxi) at (2.9,6) [state, fill=gray, label=right:$\mu^{(\xi)}$] {};
+\node (theta) at (0,7) [state, label=right:$\theta$] {};
+\node (lamtheta) at (-1,8) [state, label=right:$\lambda^{(\theta)}$] {};
+\node (mutheta) at (1,8) [state, label=right:$\mu^{(\theta)}$] {};
+
+\draw [edge] (w) to (x);
+\draw [edge] (y) to (x);
+\draw [edge] (z) to (w);
+\draw [edge] (alpha) to (z);
+\draw [edge] (xi) to (y);
+\draw [edge] (lamxi) to (xi);
+\draw [edge] (muxi) to (xi);
+\draw [edge] (theta) to (w);
+\draw [edge] (lamtheta) to (theta);
+\draw [edge] (mutheta) to (theta);
+
+\pgfsetcornersarced{\pgfpoint{2mm}{2mm}}
+\draw [thin] (-0.7, -0.5) rectangle (2.8, 3.0);
+\node at ($(2.8,-0.5)+(-0.05,0.05)$) [above left] {$N$};
+\draw [thin] (-0.9, -1) -- (-0.9, 7.7) --(0.9, 7.7) 
+  -- (0.9, 5.5) -- (2.3, 5.5) -- (2.3, 6.5) -- (3.9, 6.5) 
+  -- (3.9, -1) -- cycle;
+\node at ($(3.8,-1)+(-0.05,0.05)$) [above left] {$L$};
+\draw [thin] (-0.7, 6.0) rectangle (0.7, 7.5);
+\node at ($(0.7,6.0)+(-0.05,0.05)$) [above left] {$K$};
+
+\node at (4.5, -0.5) [label=right:{Observable absence or presence of etymon $n$ in language $l$.}] {};
+\node at (4, 0) [label=right:{$x_{nl} \in \{0,1\},\ x_{nl} = w_{nl}\cdot y_{nl}$}] {};
+\node at (4.5, 0.5) [label=right:{Observability of etymon $n$ in language $l$.}] {};
+\node at (4, 1) [label=right:{$y_{nl} \in \{0,1\},\ y_{nl} \sim \textrm{Bernoulli}(\xi_l)$}] {};
+\node at (4.5, 1.5) [label=right:{Posited absence or presence of eytmon $n$ in language $l$.}] {};
+\node at (4, 2) [label=right:{$w_{nl} \in \{0,1\},\ w_{nl} \sim \textrm{Bernoulli}(\theta_{z_nl})$}] {};
+\node at (4.5, 2.5) [label=right:{$z_n$ is the class of eytmon $n$.}] {};
+\node at (4, 3) [label=right:{$z_1,\ldots,z_N = \textrm{table assignment from $N$th term of } \textrm{CRP}(\alpha)$}] {};
+\node at (4.5, 3.5) [label=right:{Concentration parameter for Chinese Restaurant Process.}] {};
+\node at (4, 4) [label=right:{$\alpha \in (0,\infty)$}] {};
+\node at (4.5, 4.5) [label=right:{Coverage for language $l$.}] {};
+\node at (4, 5) [label=right:{$\xi_l \in (0,1),\ \xi_l \sim \textrm{Beta}(\mu^{(\xi)}_l \lambda^{(\xi)},(1-\mu^{(\xi)}_l) \lambda^{(\xi)})$}] {};
+\node at (4.5, 5.5) [label=right:{Hyperparameters for coverage.}] {};
+\node at (4, 6) [label=right:{$\lambda^{(\xi)} \in (0,\infty),\ \mu^{(\xi)}_l = 0.9 \cdot N_l / \max\{N_1, N_2, \ldots, N_L\}$}] {};
+\node at (4.5, 6.5) [label=right:{Intensity of class $k$ in language $l$.}] {};
+\node at (4, 7) [label=right:{$\theta_{kl} \in (0,1),\ \theta_{kl} \sim \textrm{Beta}(\mu^{(\theta)} \lambda^{(\theta)},(1-\mu^{(\theta)}) \lambda^{(\theta)})$}] {};
+\node at (4.5, 7.5) [label=right:{Hyperparameters for intensity.}] {};
+\node at (4, 8) [label=right:{$\lambda^{(\theta)} \in (0,\infty),\ \mu^{(\theta)} \in (0,1)$}] {};
+\end{tikzpicture}
