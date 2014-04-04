@@ -5,7 +5,7 @@ import scala.math._
 import breeze.numerics.lgamma
 import breeze.stats.distributions.Rand
 
-object Continuum extends App {
+object Bundle extends App {
 
   if( args.length != 1) {
     println( "Required argument: config-file")
@@ -57,14 +57,14 @@ object Continuum extends App {
 
   // quantities to resample
   var α = conf("init.alpha", 5.).toDouble
-  var ρμ = conf("init.rhomu", 0.5).toDouble
-  var ρλ = conf("init.rholam", 0.5).toDouble
+  var μρ = conf("init.rhomu", 0.5).toDouble
+  var λρ = conf("init.rholam", 0.5).toDouble
   val zN = ArrayBuffer.fill( N)( 0)
 
   val numEtymaL = IndexedSeq.tabulate( L)( l => xNL.map( _( l)).sum)
   val maxEtyma = numEtymaL.max
-  val ζμL = numEtymaL.map( _.toDouble / maxEtyma * 0.9)
-  var ζλ = conf("init.rholam", 10.).toDouble
+  val μζL = numEtymaL.map( _.toDouble / maxEtyma * 0.9)
+  var λζ = conf("init.rholam", 10.).toDouble
 
   val yNL = ArrayBuffer.fill( N, L)( 1)
 
@@ -73,16 +73,16 @@ object Continuum extends App {
 L: %1d, number of languages.
 N: %1d, number of etyma.
 α: %8.4f, DP concentration, resampled: %s.
-ρμ: %8.4f, cluster/language intensity freq prior, resampled: %s.
-ρλ: %8.4f, cluster/language intensity freq prior, resampled: %s.
-ζμ: observability, set proportional to vocabulary size.
-ζλ: %8.4f, observability prior, resample: %s.
+μρ: %8.4f, cluster/language intensity freq prior, resampled: %s.
+λρ: %8.4f, cluster/language intensity freq prior, resampled: %s.
+μζ: observability, set proportional to vocabulary size.
+λζ: %8.4f, observability prior, resample: %s.
 smIter: %d rounds of split-merge on z.
 """.format(
     L, N, α, move_alpha,
-    ρμ, move_rhomu, 
-    ρλ, move_rholam, 
-    ζλ, move_zetalam, 
+    μρ, move_rhomu, 
+    λρ, move_rholam, 
+    λζ, move_zetalam, 
     move_smIter))
 
   // counts
@@ -105,9 +105,9 @@ smIter: %d rounds of split-merge on z.
     // resample each yNL
     for( n <- 0 until N; val k = zN( n); l <- 0 until L; if xNL( n)( l) == 0) {
       val y = yNL( n)( l)
-      val ll1 = (ζμL( l) * ζλ + hL( l) - y) / (ζλ + N - 1) * 
-                (ρμ * ρλ + mKL0( k)( l) - y) / (ρλ + mKL1( k)( l) + mKL0( k)( l) - y)
-      val ll0 = ((1. - ζμL( l)) * ζλ + N - 1 - hL( l) + y) / (ζλ + N - 1)
+      val ll1 = (μζL( l) * λζ + hL( l) - y) / (λζ + N - 1) * 
+                (μρ * λρ + mKL0( k)( l) - y) / (λρ + mKL1( k)( l) + mKL0( k)( l) - y)
+      val ll0 = ((1. - μζL( l)) * λζ + N - 1 - hL( l) + y) / (λζ + N - 1)
       val p = if( y == 1) ll0/ll1 else ll1/ll0
       if( accept( p)) {
         if( y == 1) {
@@ -155,8 +155,8 @@ smIter: %d rounds of split-merge on z.
         for( l <- 0 until L) {
           if( yL( l) == 1)
             t1( kk) *=
-              (if( xL( l) == 1) ρμ * ρλ + mL1( l) else (1. - ρμ) * ρλ + mL0( l)) /
-              (ρλ + mL1( l) + mL0( l))
+              (if( xL( l) == 1) μρ * λρ + mL1( l) else (1. - μρ) * λρ + mL0( l)) /
+              (λρ + mL1( l) + mL0( l))
         }
       }
       // new pick for k
@@ -206,13 +206,13 @@ smIter: %d rounds of split-merge on z.
           var mass2 = m2.toDouble
           for( l <- 0 until L; if yNL( n)( l) == 1) {
             mass1 *=
-              (if( xL( l) == 1) ρμ * ρλ + m1L1( l) 
-               else (1. - ρμ) * ρλ + m1L0( l)) /
-              (ρλ + m1L1( l) + m1L0( l))
+              (if( xL( l) == 1) μρ * λρ + m1L1( l) 
+               else (1. - μρ) * λρ + m1L0( l)) /
+              (λρ + m1L1( l) + m1L0( l))
             mass2 *=
-              (if( xL( l) == 1) ρμ * ρλ + m2L1( l) 
-               else (1. - ρμ) * ρλ + m2L0( l)) /
-              (ρλ + m2L1( l) + m2L0( l))
+              (if( xL( l) == 1) μρ * λρ + m2L1( l) 
+               else (1. - μρ) * λρ + m2L0( l)) /
+              (λρ + m2L1( l) + m2L0( l))
           }
           if( unif() * (mass1 + mass2) < mass1) {
             m1 += 1
@@ -235,9 +235,9 @@ smIter: %d rounds of split-merge on z.
 
         var lmet1 = 0.
         for( l <- 0 until L) {
-          lmet1 += logPolya2D( m1L1( l), m1L0( l), ρμ * ρλ, (1. - ρμ) * ρλ)
-          lmet1 += logPolya2D( m2L1( l), m2L0( l), ρμ * ρλ, (1. - ρμ) * ρλ)
-          lmet1 -= logPolya2D( mKL1( k)( l), mKL0( k)( l), ρμ * ρλ, (1. - ρμ) * ρλ)
+          lmet1 += logPolya2D( m1L1( l), m1L0( l), μρ * λρ, (1. - μρ) * λρ)
+          lmet1 += logPolya2D( m2L1( l), m2L0( l), μρ * λρ, (1. - μρ) * λρ)
+          lmet1 -= logPolya2D( mKL1( k)( l), mKL0( k)( l), μρ * λρ, (1. - μρ) * λρ)
           /*
           assert( mKL1( k)( l) == m1L1( l) + m2L1( l), {
             println( mKL1( k)( l), m1L1( l), m2L1( l))
@@ -296,13 +296,13 @@ smIter: %d rounds of split-merge on z.
           var mass2 = m2.toDouble
           for( l <- 0 until L; if yNL( n)( l) == 1) {
             mass1 *=
-              (if( xL( l) == 1) ρμ * ρλ + m1L1( l) 
-               else (1. - ρμ) * ρλ + m1L0( l)) /
-              (ρλ + m1L1( l) + m1L0( l))
+              (if( xL( l) == 1) μρ * λρ + m1L1( l) 
+               else (1. - μρ) * λρ + m1L0( l)) /
+              (λρ + m1L1( l) + m1L0( l))
             mass2 *=
-              (if( xL( l) == 1) ρμ * ρλ + m2L1( l) 
-               else (1. - ρμ) * ρλ + m2L0( l)) /
-              (ρλ + m2L1( l) + m2L0( l))
+              (if( xL( l) == 1) μρ * λρ + m2L1( l) 
+               else (1. - μρ) * λρ + m2L0( l)) /
+              (λρ + m2L1( l) + m2L0( l))
           }
           if( zN( n) == k1) {
             m1 += 1
@@ -323,10 +323,10 @@ smIter: %d rounds of split-merge on z.
 
         var lmet1 = 0.
         for( l <- 0 until L) {
-          lmet1 -= logPolya2D( m1L1( l), m1L0( l), ρμ * ρλ, (1. - ρμ) * ρλ)
-          lmet1 -= logPolya2D( m2L1( l), m2L0( l), ρμ * ρλ, (1. - ρμ) * ρλ)
+          lmet1 -= logPolya2D( m1L1( l), m1L0( l), μρ * λρ, (1. - μρ) * λρ)
+          lmet1 -= logPolya2D( m2L1( l), m2L0( l), μρ * λρ, (1. - μρ) * λρ)
           lmet1 += logPolya2D( m1L1( l) + m2L1( l), m1L0( l) + m2L0( l), 
-            ρμ * ρλ, (1. - ρμ) * ρλ)
+            μρ * λρ, (1. - μρ) * λρ)
         }
         val lmet2 = -(lgamma( m1) + lgamma( m2) - lgamma( m1 + m2))
 
@@ -355,15 +355,15 @@ smIter: %d rounds of split-merge on z.
     }
 
     // resample ρ1, ρ0
-    var ρμn = ρμ
-    var ρλn = ρλ
+    var μρn = μρ
+    var λρn = λρ
     if( move_rhomu) {
       val scale = exp( -1 + -10. * unif())
-      ρμn = 1. - (1. - (ρμ + scale * (unif() - 0.5)).abs).abs
+      μρn = 1. - (1. - (μρ + scale * (unif() - 0.5)).abs).abs
     } 
     if( move_rholam) {
       val scale = exp( -10. * unif())
-      ρλn = (ρλ + scale * (unif() - 0.5)).abs
+      λρn = (λρ + scale * (unif() - 0.5)).abs
     }
     if( move_rhomu || move_rholam) {
       var ll = 0.
@@ -375,29 +375,29 @@ smIter: %d rounds of split-merge on z.
         val mL0 = mKL0( k)
         if( m > 0) {
           for( l <- 0 until L)
-            ll += logPolya2D( mL1( l), mL0( l), ρμn * ρλn, (1. - ρμn) * ρλn) -
-                  logPolya2D( mL1( l), mL0( l), ρμ * ρλ, (1. - ρμ) * ρλ)
+            ll += logPolya2D( mL1( l), mL0( l), μρn * λρn, (1. - μρn) * λρn) -
+                  logPolya2D( mL1( l), mL0( l), μρ * λρ, (1. - μρ) * λρ)
           kk += 1
         }
         k += 1
       }
       if( laccept( ll)) {
-        ρμ = ρμn
-        ρλ = ρλn
+        μρ = μρn
+        λρ = λρn
       }
     }
 
     // resample ζ
     if( move_zetalam) {
       val scale = exp( -10. * unif())
-      val ζλn = (ζλ + scale * (unif() - 0.5)).abs
+      val λζn = (λζ + scale * (unif() - 0.5)).abs
       var ll = 0.
       for( l <- 0 until L) {
-        val ζμ = ζμL( l)
-        ll += logPolya2D( hL( l), N - hL( l), ζμ * ζλn, (1. - ζμ) * ζλn) -
-              logPolya2D( hL( l), N - hL( l), ζμ * ζλ, (1. - ζμ) * ζλ)
+        val μζ = μζL( l)
+        ll += logPolya2D( hL( l), N - hL( l), μζ * λζn, (1. - μζ) * λζn) -
+              logPolya2D( hL( l), N - hL( l), μζ * λζ, (1. - μζ) * λζ)
       }
-      if( laccept( ll)) ζλ = ζλn
+      if( laccept( ll)) λζ = λζn
     }
 
     // resample α
@@ -411,8 +411,8 @@ smIter: %d rounds of split-merge on z.
 
     if( iter % conf( "infofreq", 10) == 0) {
       info( "--- %d ---\n" format iter)
-      info( "[α %8.4f] [ρμ %8.4f ρλ %8.4f] [ζλ %8.4f] [K %3d]\n".format( 
-        α, ρμ, ρλ, ζλ, K))
+      info( "[α %8.4f] [μρ %8.4f λρ %8.4f] [λζ %8.4f] [K %3d]\n".format( 
+        α, μρ, λρ, λζ, K))
 
       info( mK.filter( _ != 0).sorted.reverse.map( _.toString).mkString( " ") ++ "\n")
 
@@ -423,8 +423,8 @@ smIter: %d rounds of split-merge on z.
       assert( mK.filter( _ > 0).length == K)
       var lly = 0.
       for( l <- 0 until L) {
-        val ζμ = ζμL( l)
-        lly += logPolya2D( hL( l), N - hL( l), ζμ * ζλ, (1. - ζμ) * ζλ)
+        val μζ = μζL( l)
+        lly += logPolya2D( hL( l), N - hL( l), μζ * λζ, (1. - μζ) * λζ)
       }
       var llx = 0.
       ; {
@@ -436,7 +436,7 @@ smIter: %d rounds of split-merge on z.
           val mL0 = mKL0( k)
           if( m > 0) {
             for( l <- 0 until L)
-              llx += logPolya2D( mL1( l), mL0( l), ρμ * ρλ, (1. - ρμ) * ρλ)
+              llx += logPolya2D( mL1( l), mL0( l), μρ * λρ, (1. - μρ) * λρ)
             kk += 1
           }
           k += 1
@@ -462,9 +462,9 @@ smIter: %d rounds of split-merge on z.
           "%.2f".format( llz), 
           "%d".format( K), 
           "%.4f".format( α), 
-          "%.4f".format( ρμ), 
-          "%.4f".format( ρλ), 
-          "%.4f".format( ζλ)) ++
+          "%.4f".format( μρ), 
+          "%.4f".format( λρ), 
+          "%.4f".format( λζ)) ++
           (0 until L).map( l => "%.4f".format( hL( l).toDouble / N))
         foLog.write( columns.mkString("\t") + "\n")
         foLog.flush
