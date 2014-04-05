@@ -1,4 +1,4 @@
-package linkage
+package bundle
 
 import scala.collection.mutable.ArrayBuffer
 import scala.math._
@@ -16,10 +16,10 @@ object Bundle extends App {
   val fn_base = Util.composePath( dir, conf("base"))
   val fn_data = Util.composePath( dir, conf("data"))
 
-  val move_alpha = conf("move.alpha", "yes") == "yes"
-  val move_rhomu = conf("move.rhomu", "yes") == "yes"
-  val move_rholam = conf("move.rholam", "yes") == "yes"
-  val move_zetalam = conf("move.zetalam", "yes") == "yes"
+  val move_α = conf("move.alpha", "yes") == "yes"
+  val move_μρ = conf("move.murho", "yes") == "yes"
+  val move_λρ = conf("move.lamrho", "yes") == "yes"
+  val move_λζ = conf("move.lamzeta", "yes") == "yes"
   val move_smIter = conf("move.smiter", 0).toInt
 
   // set up info
@@ -49,7 +49,7 @@ object Bundle extends App {
   // set up trace files
   val foLog = new java.io.FileWriter( fn_base + ".log")
   val columns = Seq( "iter", "ll", "llx", "lly", "llz", "K") ++ 
-    Seq( "alpha", "rhomu", "rholam", "zetalam") ++ langL
+    Seq( "alpha", "murho", "lamrho", "lamzeta") ++ langL
   foLog.write( columns.mkString("\t") + "\n")
 
   var foz = new java.io.FileWriter( fn_base + ".z.log")
@@ -57,14 +57,14 @@ object Bundle extends App {
 
   // quantities to resample
   var α = conf("init.alpha", 5.).toDouble
-  var μρ = conf("init.rhomu", 0.5).toDouble
-  var λρ = conf("init.rholam", 0.5).toDouble
+  var μρ = conf("init.murho", 0.5).toDouble
+  var λρ = conf("init.lamrho", 0.5).toDouble
   val zN = ArrayBuffer.fill( N)( 0)
 
   val numEtymaL = IndexedSeq.tabulate( L)( l => xNL.map( _( l)).sum)
   val maxEtyma = numEtymaL.max
   val μζL = numEtymaL.map( _.toDouble / maxEtyma * 0.9)
-  var λζ = conf("init.rholam", 10.).toDouble
+  var λζ = conf("init.lamrho", 10.).toDouble
 
   val yNL = ArrayBuffer.fill( N, L)( 1)
 
@@ -79,10 +79,10 @@ N: %1d, number of etyma.
 λζ: %8.4f, observability prior, resample: %s.
 smIter: %d rounds of split-merge on z.
 """.format(
-    L, N, α, move_alpha,
-    μρ, move_rhomu, 
-    λρ, move_rholam, 
-    λζ, move_zetalam, 
+    L, N, α, move_α,
+    μρ, move_μρ, 
+    λρ, move_λρ, 
+    λζ, move_λζ, 
     move_smIter))
 
   // counts
@@ -357,15 +357,15 @@ smIter: %d rounds of split-merge on z.
     // resample ρ1, ρ0
     var μρn = μρ
     var λρn = λρ
-    if( move_rhomu) {
+    if( move_μρ) {
       val scale = exp( -1 + -10. * unif())
       μρn = 1. - (1. - (μρ + scale * (unif() - 0.5)).abs).abs
     } 
-    if( move_rholam) {
+    if( move_λρ) {
       val scale = exp( -10. * unif())
       λρn = (λρ + scale * (unif() - 0.5)).abs
     }
-    if( move_rhomu || move_rholam) {
+    if( move_μρ || move_λρ) {
       var ll = 0.
       var k = 0
       var kk = 0
@@ -388,7 +388,7 @@ smIter: %d rounds of split-merge on z.
     }
 
     // resample ζ
-    if( move_zetalam) {
+    if( move_λζ) {
       val scale = exp( -10. * unif())
       val λζn = (λζ + scale * (unif() - 0.5)).abs
       var ll = 0.
@@ -401,7 +401,7 @@ smIter: %d rounds of split-merge on z.
     }
 
     // resample α
-    if( move_alpha) {
+    if( move_α) {
       val αn = (α + unif() * 0.1 - 0.05).abs
       val ll = 
        (lgamma( αn) + log( αn) * K - lgamma( N + αn)) -
@@ -475,7 +475,9 @@ smIter: %d rounds of split-merge on z.
         // convert binary to hex, LITTLE ENDIAN
         val foy = new java.io.FileWriter( fn_base + ".y." + iter + ".hex")
         for( n <- 0 until N) {
-          val hex = yNL( n).map( "%d" format _).mkString.grouped( 4).map{ y4 =>
+          val bin = yNL( n).map( "%d" format _).mkString
+          val padded = bin.padTo( (bin.length+3) & ~3, '0')
+          val hex = padded.grouped( 4).map{ y4 =>
             Integer.toHexString( Integer.parseInt( y4.reverse, 2))
           }.toSeq.mkString
           foy.write( hex + "\n")
