@@ -1,3 +1,4 @@
-name: Your New Jekyll Site
+name: BUNDLE
 markdown: redcarpet
 pygments: true
+baseurl: /bundle
