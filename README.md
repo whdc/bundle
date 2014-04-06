@@ -1,7 +1,7 @@
 # BUNDLE
 
-* [Download and run BUNDLE](wiki/Tutorial)
-* [BUNDLE design and implementation](wiki/Overview)
+* [Download and run BUNDLE](https://github.com/whdc/bundle/wiki/Tutorial)
+* [BUNDLE design and implementation](https://github.com/whdc/bundle/wiki/Overview)
 
 BUNDLE finds isogloss bundles (typical feature distributions) in a dialect continuum.  Given a binary feature matrix (N features by L languages) it will construct clusters of features that have similar distributions over the L languages.  This is the opposite of the typical clustering model which clusters objects by their features.  Other notable properties of BUNDLE are:
 
