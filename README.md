@@ -5,6 +5,9 @@ BUNDLE finds isogloss bundles (typical feature distributions) in a dialect conti
 * It will automatically infer the number of clusters in the data.
 * It incorporates a simple _attestation model_ that assumes that a given fraction of the features in any language will go unattested.
 
-BUNDLE does not plot the results, but a plot of a typical result is shown here.  
+BUNDLE does not plot the results, but here is what a typical result would look like if plotted.  This shows how 422 Polynesian etyma, grouped into twelve clusters, are distributed over 35 Central Pacific languages.   Each clusters consists of etyma with similar distributions.
 
 ![The distribution of Polynesian words](doc/poly.plot.png)
+
+* [Download and run BUNDLE|Tutorial]
+* [BUNDLE design and implementation|Overview]
