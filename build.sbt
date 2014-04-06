@@ -2,7 +2,7 @@ import AssemblyKeys._
 
 name := "linkage"
 
-version := "0.1"
+version := "0.1.0"
 
 organization := "edu.berkeley.linguistics"
 
@@ -10,7 +10,6 @@ scalaVersion := "2.10.4"
 
 libraryDependencies  ++= Seq(
   "net.sf.opencsv" % "opencsv" % "2.0",
-  // "org.scalanlp" % "breeze_2.10" % "0.7"
   "org.scalanlp" % "breeze-natives_2.10" % "0.7"
 )
 
@@ -20,7 +19,7 @@ resolvers ++= Seq(
 )
 
 lazy val buildSettings = Seq(
-  version := "0.1",
+  version := "0.1.0",
   organization := "edu.berkeley.linguistics",
   scalaVersion := "2.10.4"
 )
@@ -28,8 +27,6 @@ lazy val buildSettings = Seq(
 val app = (project in file("app")).
   settings(buildSettings: _*).
   settings(assemblySettings: _*)
-
-
 
 mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
   {

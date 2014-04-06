@@ -208,14 +208,14 @@ object Distill extends App {
   foth.close()
 
   // cluster stats
-  val softSizeK = d__.map( _.sum)
-  val hardSizeK = d__.map( _.count( _ > 0.5))
+  val softSizeK = d__.map( _.sum.toDouble / I)
+  val hardSizeK = d__.map( _.count( _ > I/2))
 
   // display clusters
-  println( "\n%d CLUSTERS WITH 2+ HARD MEMBERS\n" format hardSizeK.count( _ >= 2))
+  println( "\n     %d CLUSTERS WITH 2+ HARD MEMBERS\n" format hardSizeK.count( _ >= 2))
   for( line <- langL.map( _.take(3).padTo(3, ' ')).transpose)
     println( "     " + line.mkString.grouped(5).mkString(" "))
-  for( k <- 0 until K) {
+  for( k <- 0 until K; if hardSizeK(k) >= 2) {
     println( "%4d ".format( hardSizeK(k)) + c___( k).map { c_ =>
       val th = c_(1).toDouble / (c_(0) + c_(1))
       " .:=@"(min(4, (th * 5).toInt))
