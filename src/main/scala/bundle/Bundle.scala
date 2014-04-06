@@ -2,6 +2,7 @@ package bundle
 
 import scala.collection.mutable.ArrayBuffer
 import scala.math._
+import scala.sys.process._
 import breeze.numerics.lgamma
 import breeze.stats.distributions.Rand
 
@@ -54,6 +55,8 @@ object Bundle extends App {
 
   var foz = new java.io.FileWriter( fn_base + ".z.log")
   foz.write( "iter\t" + etymonN.mkString("\t") + "\n")
+
+  assert( Seq("mkdir", "-p", fn_base+".y").! == 0)
 
   // quantities to resample
   var α = conf("init.alpha", 5.).toDouble
@@ -473,7 +476,7 @@ smIter: %d rounds of split-merge on z.
         foz.flush
 
         // convert binary to hex, LITTLE ENDIAN
-        val foy = new java.io.FileWriter( fn_base + ".y." + iter + ".hex")
+        val foy = new java.io.FileWriter( fn_base + ".y/" + iter + ".hex")
         for( n <- 0 until N) {
           val bin = yNL( n).map( "%d" format _).mkString
           val padded = bin.padTo( (bin.length+3) & ~3, '0')

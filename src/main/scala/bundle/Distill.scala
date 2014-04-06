@@ -34,12 +34,12 @@ object Distill extends App {
     zN: IndexedSeq[Int]
   ) {
     lazy val yNL: IndexedSeq[ IndexedSeq[ Int]] = {
-      io.Source.fromFile( fn_base + ".y." + iter + ".hex")
+      io.Source.fromFile( fn_base + ".y/" + iter + ".hex")
         .getLines().map { l => 
           val padded = l.map{ c => 
             Integer.toBinaryString( Integer.parseInt( ""+c, 16))
-            .reverse.padTo( 4, '0')}.flatten
-          padded.take( L).map( _.toInt).toIndexedSeq
+              .reverse.padTo( 4, '0')}.flatten
+          padded.take( L).map( _ - '0').toIndexedSeq
         }.toIndexedSeq
     }
   }
@@ -122,7 +122,7 @@ object Distill extends App {
   }
 
   // initial round
-  println( "Aligning z samples")
+  println( "Aligning z samples...")
   (0 until K).copyToArray( π__( 0))
   for( state <- stateStream()) {
     val z_ = state.zN
@@ -134,7 +134,7 @@ object Distill extends App {
   var old_score = 0L
   for( j <- 1 to 20) {
     if( old_score < score()) {
-      println( "Round "+j+" score:" + score())
+      println( "Round "+j+" score: " + score())
       old_score = score()
       for( state <- stateStream()) {
         val z_ = state.zN
@@ -152,14 +152,16 @@ object Distill extends App {
 
   val kRank_ = kRRank_.zipWithIndex.sortBy( _._1).map( _._2)
 
+  /*
   for( k8 <- 0.until( K, 8)) {
     for( k <- k8 until (k8+8)) {
       if( k < K) print( "%7d " format kCount_( kRRank_( k)))
     }
     println()
   }
+  */
 
-  println( "Distilling")
+  println( "Distilling...")
 
   /*
   val fo = new java.io.FileWriter( fn_base + ".za.log")
@@ -186,8 +188,9 @@ object Distill extends App {
       val xL = xNL( n)
       d__( z)( n) += 1
       for( l <- 0 until L)
-        if( yL( l) == 1)
+        if( yL( l) == 1) {
           c___( z)( l)( xL( l)) += 1
+        }
     }
   }
 
@@ -203,4 +206,19 @@ object Distill extends App {
     foth.write( c___( k).map( c_ => "%.4f".format( c_(1).toDouble / (c_(1) + c_(0))))
       .mkString("\t") ++ "\n")
   foth.close()
+
+  // cluster stats
+  val softSizeK = d__.map( _.sum)
+  val hardSizeK = d__.map( _.count( _ > 0.5))
+
+  // display clusters
+  println( "\n%d CLUSTERS WITH 2+ HARD MEMBERS\n" format hardSizeK.count( _ >= 2))
+  for( line <- langL.map( _.take(3).padTo(3, ' ')).transpose)
+    println( "     " + line.mkString.grouped(5).mkString(" "))
+  for( k <- 0 until K) {
+    println( "%4d ".format( hardSizeK(k)) + c___( k).map { c_ =>
+      val th = c_(1).toDouble / (c_(0) + c_(1))
+      " .:=@"(min(4, (th * 5).toInt))
+    }.mkString.grouped(5).mkString(" "))
+  }
 }
