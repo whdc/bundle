@@ -1,6 +1,6 @@
 import AssemblyKeys._
 
-name := "linkage"
+name := "bundle"
 
 version := "0.1.0"
 
