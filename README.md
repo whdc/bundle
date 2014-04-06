@@ -7,4 +7,4 @@ BUNDLE finds isogloss bundles (typical feature distributions) in a dialect conti
 
 BUNDLE does not plot the results, but a plot of a typical result is shown here.  
 
-![The distribution of Polynesian words](doc/poly.plot.pdf)
+![The distribution of Polynesian words](doc/poly.plot.png)
