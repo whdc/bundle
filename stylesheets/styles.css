@@ -63,6 +63,11 @@ code, pre {
   font-size:12px;
 }
 
+*:not(pre) > code {
+  padding-left:1px;
+  padding-right:1px;
+}
+
 pre {
   padding:8px 15px;
   background: #f8f8f8;  

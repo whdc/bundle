@@ -1,4 +1,4 @@
 name: BUNDLE
-markdown: redcarpet
+markdown: kramdown
 pygments: true
 baseurl: /bundle

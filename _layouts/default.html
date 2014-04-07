@@ -6,39 +6,39 @@
         <title>{{ page.title }}</title>
         <meta name="viewport" content="width=device-width">
 
-        <!-- syntax highlighting CSS -->
-        <link rel="stylesheet" href="{{site.baseurl}}/css/syntax.css">
+        <link rel="stylesheet" href="{{site.baseurl}}/stylesheets/styles.css">
+        <link rel="stylesheet" href="{{site.baseurl}}/stylesheets/pygment_trac.css">
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="{{site.baseurl}}/css/main.css">
-
+        <!-- MathJax -->
+        <script type="text/javascript"
+          src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        </script>
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
     </head>
     <body>
+      <div class="wrapper">
+        <header>
+          <h1>{{ site.name }}</h1>
+          <p></p>
 
-        <div class="site">
-          <div class="header">
-            <h1 class="title"><a href="/">{{ site.name }}</a></h1>
-            <a class="extra" href="/">home</a>
-          </div>
+          <p class="view"><a href="https://github.com/whdc/bundle">View the Project on    GitHub <small>whdc/bundle</small></a></p>
 
+
+          <ul>
+            <li><a href="https://github.com/whdc/bundle/zipball/master">Download          <strong>ZIP File</strong></a></li>
+            <li><a href="https://github.com/whdc/bundle/tarball/master">Download          <strong>TAR Ball</strong></a></li>
+            <li><a href="https://github.com/whdc/bundle">View On <strong>GitHub</strong></a></li>
+          </ul>
+        </header>
+        <section>
           {{ content }}
-
-          <div class="footer">
-            <div class="contact">
-              <p>
-                Your Name<br />
-                What You Are<br />
-                you@example.com
-              </p>
-            </div>
-            <div class="contact">
-              <p>
-                <a href="https://github.com/yourusername">github.com/yourusername</a><br />
-                <a href="https://twitter.com/yourusername">twitter.com/yourusername</a><br />
-              </p>
-            </div>
-          </div>
-        </div>
-
+        </section>
+        <footer>
+          <p>This project is maintained by <a href="https://github.com/whdc">whdc</a></p>
+          <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/  orderedlist">orderedlist</a></small></p>
+        </footer>
+      </div>
     </body>
 </html>
